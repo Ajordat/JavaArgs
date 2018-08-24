@@ -1,8 +1,8 @@
 package javaArgs;
 
-public class StringArgument extends Argument<String> {
+public class IntegerArgument extends Argument<Integer> {
 
-    StringArgument(String defaultsTo) {
+    IntegerArgument(Integer defaultsTo) {
         super(defaultsTo);
     }
 
@@ -10,13 +10,13 @@ public class StringArgument extends Argument<String> {
     public void useToken(String token) {
         for (ArgumentToken argToken : args) {
             if (argToken.getToken().equals(token)) {
-                this.value = (String) argToken.getValue();
+                this.value = (Integer) argToken.getValue();
             }
         }
     }
 
     @Override
-    void setValue(String value) {
+    void setValue(Integer value) {
         this.value = value;
     }
 }

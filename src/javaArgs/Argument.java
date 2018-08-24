@@ -1,44 +1,64 @@
 package javaArgs;
 
-public abstract class Argument<Object> {
+import java.util.Iterator;
+import java.util.LinkedList;
 
-    private String shortName;
-    private String longName;
+public abstract class Argument<Object> {
+    LinkedList<ArgumentToken> args;
+    private Object defaultsTo;
     Object value;
 
-    Argument(String name, Object value) {
-        this(name, name, value);
+
+    Argument(Object defaultsTo) {
+        this.args = new LinkedList<>();
+        this.defaultsTo = defaultsTo;
+        this.value = defaultsTo;
     }
 
-    Argument(String shortName, String longName, Object value) {
-        this.shortName = shortName;
-        this.longName = longName;
-        this.value = value;
+    public Argument<Object> addToken(String name, Object value) {
+        args.add(new ArgumentToken<>(name, value));
+        return this;
+    }
+
+    public Argument<Object> addToken(String name) {
+        args.add(new ArgumentToken<>(name));
+        return this;
+    }
+
+    public abstract void useToken(String token);
+    abstract void setValue(Object value);
+
+    boolean isArgument(String token) {
+        for (ArgumentToken argToken : this.args) {
+            if (token.equals(argToken.getToken()))
+                return true;
+        }
+        return false;
     }
 
     public String toString() {
-        String s = this.shortName;
+        StringBuilder s = new StringBuilder();
 
-        if (!this.shortName.equals(this.longName))
-            s += ", " + this.longName;
+        Iterator i = this.args.iterator();
+        while (i.hasNext()) {
+            s.append(i.next());
+            if (i.hasNext())
+                s.append(", ");
+        }
 
-        return s + ": " + this.value;
+        return s + ": " + this.value + (this.defaultsTo != null ? "(" + this.defaultsTo + ")" : "");
     }
 
-    void setValue(Object value) {
-        this.value = value;
+    public Object getValue() {
+        return this.value;
     }
 
-    Object getValue() {
-        return value;
+
+    Object getDefault() {
+        return defaultsTo;
     }
 
-    String getShortName() {
-        return this.shortName;
+    String[] getNames() {
+        return (String[]) this.args.toArray();
     }
-
-    String getLongName() {
-        return this.longName;
-    }
-
 }

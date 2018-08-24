@@ -1,16 +1,22 @@
 package javaArgs;
 
-class BooleanArgument extends Argument<Boolean> {
+public class BooleanArgument extends Argument<Boolean> {
 
-    BooleanArgument(String name, Boolean value) {
-        super(name, value);
+    BooleanArgument(Boolean defaultsTo) {
+        super(defaultsTo);
     }
 
-    BooleanArgument(String shortName, String longName, Boolean value) {
-        super(shortName, longName, value);
+    @Override
+    public void useToken(String token) {
+        for (ArgumentToken argToken : args) {
+            if (argToken.getToken().equals(token)) {
+                this.value = (Boolean) argToken.getValue();
+            }
+        }
     }
 
-    void turnValue() {
-        this.value = !this.value;
+    @Override
+    void setValue(Boolean value) {
+        this.value = value;
     }
 }
