@@ -3,6 +3,8 @@ import javaArgs.JavaArgs;
 import javaArgs.exceptions.NumberParsingException;
 import javaArgs.exceptions.ParsingException;
 
+import java.util.Arrays;
+
 
 public class Main {
 
@@ -35,5 +37,8 @@ public class Main {
         System.out.println(jArgs.getArg("boolean").getValue());
         System.out.println(jArgs.getArg("string").getValue());
         System.out.println(jArgs.getArg("integer").getValue());
+        System.out.println("# args: " + jArgs.length());
+        System.out.println(Arrays.toString(jArgs.getLoneArguments()));
+        System.out.println("isEmpty: " + jArgs.isEmpty());
     }
 }

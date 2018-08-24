@@ -13,11 +13,13 @@ import static javaArgs.exceptions.ArgumentException.OnType.STRING;
 
 public class JavaArgs {
     private LinkedHashMap<String, Argument> args;
-    private LinkedList<String> loneStrings;
+    private LinkedList<String> loneArguments;
+    private int length;
 
     public JavaArgs() {
-        args = new LinkedHashMap<>();
-        loneStrings = new LinkedList<>();
+        this.args = new LinkedHashMap<>();
+        this.loneArguments = new LinkedList<>();
+        this.length = 0;
     }
 
     public BooleanArgument createArgument(String key, boolean defaultsTo) {
@@ -46,12 +48,20 @@ public class JavaArgs {
         return args.get(key);
     }
 
-    public String[] getLoneStrings() {
-        return (String[]) this.loneStrings.toArray();
+    public String[] getLoneArguments() {
+        return this.loneArguments.toArray(new String[0]);
     }
 
+    @SuppressWarnings("unchecked")
     public void parseInput(String[] input) throws ParsingException, NumberParsingException {
+        boolean found;
+
+        if (input == null)
+            return;
+
+        this.length = 0;
         for (int i = 0; i < input.length; i++) {
+            found = false;
             for (Argument argument : this.args.values()) {
                 if (argument.isArgument(input[i])) {
                     ArgumentToken token = argument.getToken(input[i]);
@@ -83,11 +93,22 @@ public class JavaArgs {
                             argument.useToken(token);
                         }
                     }
+                    found = true;
                     break;
-                } else {
-                    loneStrings.add(input[i]);
                 }
             }
+            if (!found) {
+                this.loneArguments.add(input[i]);
+            }
+            this.length++;
         }
+    }
+
+    public int length() {
+        return this.length;
+    }
+
+    public boolean isEmpty() {
+        return this.length == 0;
     }
 }
