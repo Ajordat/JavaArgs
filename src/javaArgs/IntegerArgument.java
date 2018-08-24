@@ -16,6 +16,11 @@ public class IntegerArgument extends Argument<Integer> {
     }
 
     @Override
+    public void useToken(ArgumentToken token) {
+        this.value = (Integer) token.getValue();
+    }
+
+    @Override
     void setValue(Integer value) {
         this.value = value;
     }

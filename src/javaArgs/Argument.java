@@ -26,6 +26,9 @@ public abstract class Argument<Object> {
     }
 
     public abstract void useToken(String token);
+
+    public abstract void useToken(ArgumentToken token);
+
     abstract void setValue(Object value);
 
     boolean isArgument(String token) {
@@ -34,6 +37,14 @@ public abstract class Argument<Object> {
                 return true;
         }
         return false;
+    }
+
+    ArgumentToken getToken(String token) {
+        for (ArgumentToken argToken : this.args) {
+            if (token.equals(argToken.getToken()))
+                return argToken;
+        }
+        return null;
     }
 
     public String toString() {

@@ -1,5 +1,7 @@
-import javaArgs.JavaArgs;
 import javaArgs.Argument;
+import javaArgs.JavaArgs;
+import javaArgs.exceptions.NumberParsingException;
+import javaArgs.exceptions.ParsingException;
 
 
 public class Main {
@@ -10,14 +12,21 @@ public class Main {
         jArgs.createArgument("boolean", true)
                 .addToken("-b", true)
                 .addToken("-n", false);
+
         jArgs.createArgument("string", "pardal")
                 .addToken("-s")
                 .addToken("--string");
+
         jArgs.createArgument("integer", 3)
                 .addToken("-i")
                 .addToken("--integer", 5);
 
-        jArgs.parseInput(args);
+        try {
+            jArgs.parseInput(("-n --string asdf qwer --integer 12 -i 18").split(" "));
+        } catch (ParsingException | NumberParsingException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         for (Argument arg : jArgs.getArguments()) {
             System.out.println(arg);

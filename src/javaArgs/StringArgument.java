@@ -16,6 +16,11 @@ public class StringArgument extends Argument<String> {
     }
 
     @Override
+    public void useToken(ArgumentToken token) {
+        this.value = (String) token.getValue();
+    }
+
+    @Override
     void setValue(String value) {
         this.value = value;
     }

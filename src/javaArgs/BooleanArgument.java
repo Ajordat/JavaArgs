@@ -16,6 +16,11 @@ public class BooleanArgument extends Argument<Boolean> {
     }
 
     @Override
+    public void useToken(ArgumentToken token) {
+        this.value = (Boolean) token.getValue();
+    }
+
+    @Override
     void setValue(Boolean value) {
         this.value = value;
     }
