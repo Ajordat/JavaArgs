@@ -31,7 +31,7 @@ public abstract class Argument<Object> {
 
     abstract void setValue(Object value);
 
-    boolean isArgument(String token) {
+    boolean isToken(String token) {
         for (ArgumentToken argToken : this.args) {
             if (token.equals(argToken.getToken()))
                 return true;
@@ -64,6 +64,9 @@ public abstract class Argument<Object> {
         return this.value;
     }
 
+    public boolean isSet() {
+        return this.value != null;
+    }
 
     Object getDefault() {
         return defaultsTo;

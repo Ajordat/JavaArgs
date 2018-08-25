@@ -1,5 +1,4 @@
-import javaArgs.Argument;
-import javaArgs.JavaArgs;
+import javaArgs.*;
 import javaArgs.exceptions.NumberParsingException;
 import javaArgs.exceptions.ParsingException;
 
@@ -19,12 +18,12 @@ public class Main {
                 .addToken("-s")
                 .addToken("--string");
 
-        jArgs.createArgument("integer", 3)
+        jArgs.createArgument("integer", (Integer) null)
                 .addToken("-i")
                 .addToken("--integer", 5);
 
         try {
-            jArgs.parseInput(("-n --string asdf qwer --integer 12 -i 18").split(" "));
+            jArgs.parseInput(("-n --string asdf qwer 12 18").split(" "));
         } catch (ParsingException | NumberParsingException e) {
             e.printStackTrace();
             System.exit(1);
@@ -34,9 +33,13 @@ public class Main {
             System.out.println(arg);
         }
 
-        System.out.println(jArgs.getArg("boolean").getValue());
-        System.out.println(jArgs.getArg("string").getValue());
-        System.out.println(jArgs.getArg("integer").getValue());
+        BooleanArgument bArg = (BooleanArgument) jArgs.getArgument("boolean");
+        StringArgument sArg = (StringArgument) jArgs.getArgument("string");
+        IntegerArgument iArg = (IntegerArgument) jArgs.getArgument("integer");
+        System.out.println("is set: " + bArg.isSet() + " - " + bArg.getValue());
+        System.out.println("is set: " + sArg.isSet() + " - " + sArg.getValue());
+        System.out.println("is set: " + iArg.isSet() + " - " + iArg.getValue());
+
         System.out.println("# args: " + jArgs.length());
         System.out.println(Arrays.toString(jArgs.getLoneArguments()));
         System.out.println("isEmpty: " + jArgs.isEmpty());

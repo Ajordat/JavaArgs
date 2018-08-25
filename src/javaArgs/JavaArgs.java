@@ -22,7 +22,7 @@ public class JavaArgs {
         this.length = 0;
     }
 
-    public BooleanArgument createArgument(String key, boolean defaultsTo) {
+    public BooleanArgument createArgument(String key, Boolean defaultsTo) {
         BooleanArgument arg = new BooleanArgument(defaultsTo);
         args.put(key, arg);
         return arg;
@@ -34,7 +34,7 @@ public class JavaArgs {
         return arg;
     }
 
-    public IntegerArgument createArgument(String key, int defaultsTo) {
+    public IntegerArgument createArgument(String key, Integer defaultsTo) {
         IntegerArgument arg = new IntegerArgument(defaultsTo);
         args.put(key, arg);
         return arg;
@@ -44,7 +44,7 @@ public class JavaArgs {
         return args.values();
     }
 
-    public Argument getArg(String key) {
+    public Argument getArgument(String key) {
         return args.get(key);
     }
 
@@ -63,7 +63,7 @@ public class JavaArgs {
         for (int i = 0; i < input.length; i++) {
             found = false;
             for (Argument argument : this.args.values()) {
-                if (argument.isArgument(input[i])) {
+                if (argument.isToken(input[i])) {
                     ArgumentToken token = argument.getToken(input[i]);
 
                     if (argument instanceof BooleanArgument) {

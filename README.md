@@ -20,17 +20,18 @@ As said, now you need to create the arguments using a *key*. This time the *key*
 jArgs.createArgument("string", "hello world!");
 ```
 
-This means that an argument called "string" is created and has the default value "hello world!". This default value is returned 
+This means that an argument called "string" is created and has the default value "hello world!". The default value is returned 
 when requesting for an argument that hasn't been specified from command line (user).
-It can be *null*, making the parameter mandatory.
+It can be `null`, making the parameter mandatory.
 
-This *key* is transparent for the user. In order for him to interact, you need to create the argument's tokens.
+The *key* is transparent for the user. In order for him to interact, you need to create the argument's tokens.
 
 
 ## Adding the *tokens*
 After creating the argument, it is needed to add the **tokens**, which are the words the user will use to pass the values to 
-the program. This *tokens* can be either **String**, **int** or **boolean**; meaning these three are the type of argument accepted.
-This can be done either on creation or afterwards, as shown:
+the program. This *tokens* can be either `Boolean`, `String` or `Integer`; meaning these three are the type of argument accepted.
+
+The addition of a `String` argument  is done as follows:
 
 ```java
 jArgs.createArgument("path", ".")
@@ -38,7 +39,7 @@ jArgs.createArgument("path", ".")
         .addToken("--prev-dir", "..");
 ```
 
-In the lines above the argument "path" has been created with the default value ".". Later, we add the following *tokens*:
+In the lines above, the argument "path" has been created with the default value ".". Later, we add the following *tokens*:
 * `--path`: This argument doesn't have a default value so it requires a second argument when calling the program used, 
 e.g.: `./foo --path /home/foo`.
 * `--prev-dir`: This other argument has an specified default value, so when it appears on the command line, 
@@ -56,14 +57,18 @@ jArgs.createArgument("debug_mode", false)
 In this case, if none of the previous tokens is written as an argument, the value of argument "debug_mode" is *false*.
 If the tokens "-d" or "--debug" are written, "debug_mode" is *true*.
 
-It can also be done with *integers* and without an argument default value, making this parameter **mandatory** for the user:
+### Mandatory arguments
+
+If you want to force the user to set an argument, just set the default value to null:
+
 ```java
-jArgs.createArgument("speed", null)
+jArgs.createArgument("speed", (Integer) null)
         .addToken("--speed")
         .addToken("--slow", 1)
         .addToken("--medium", 3)
         .addToken("--fast", 5);
 ```
+If you set the default value to null, you'll have to cast it to either `Boolean`, `String` or `Integer` in order to set the type of the argument.
 
 ## Parsing the arguments
 After setting up the JavaArgs object, it needs to read the `String[] args` parameter of the `main` executable in order to parse 
@@ -71,8 +76,37 @@ the arguments.
 ```java
 jArgs.parseInput(args);
 ```
-This call may throw **exceptions** (see JavaDoc for details), which all inherit from the abstract class `ArgumentException`.
+This call may throw **exceptions** (see Documentation for details), which all inherit from the abstract class `ArgumentException`.
 
-## Retrieving the values
+## Retrieving argument values
 
 After parsing the program arguments, we can now retrieve the desired arguments:
+
+```java
+int speed = (int) jArgs.getArgument("speed").getValue();
+```
+
+Note the cast to `int`. The call `getArgument()` returns an instance of `Argument`, which only deals with `Object`s.
+In order to work more easily if there's need to perform multiple calls to said argument, it's easier to work with
+instances of `BooleanArgument`, `StringArgument` and `IntegerArgument`.
+
+```java
+IntegerArgument speedArg = (IntegerArgument) jArgs.getArgument("speed");
+```
+
+### Retrieving from mandatory arguments
+
+For mandatory arguments, it's better to check before hand if the value was set (we want to avoid NullPointerException's, right?):
+
+```java
+if (speedArg.isSet()) {
+        speed = speedArg.getValue();    // There's no need for cast, we're already treating with integers
+} else {
+        logError();
+}
+```
+
+In this last example we can also see how it's easier to work with the classes that inherit from `Argument`.
+
+
+
