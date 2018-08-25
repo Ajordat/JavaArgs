@@ -15,16 +15,26 @@ This was the easy part.
 
 ##  Setting the arguments
 
-As said, now you need to create the arguments using a *key*. This time the *key* will be the word "string".
+As said, now you need to create the arguments using *keys*. In this example, "boolean_arg", "string_arg" and "integer_arg" are the keys of each argument.
 ```java
-jArgs.createArgument("string", "hello world!");
+jArgs.createArgument("boolean_arg", true);
+jArgs.createArgument("string_arg", "hello world!");
+jArgs.createArgument("integer_arg", 0);
 ```
 
-This means that an argument called "string" is created and has the default value "hello world!". The default value is returned 
-when requesting for an argument that hasn't been specified from command line (user).
-It can be `null`, making the parameter mandatory.
+This means that the three arguments get created and they all have the default value specified, indicating the type of each argument. 
+The default value is returned when requesting for the value of an argument that hasn't been specified from command line (by the user).
 
 The *key* is transparent for the user. In order for him to interact, you need to create the argument's tokens.
+
+### Mandatory arguments
+
+If you want to force the user to set an argument, just set the default value to `null`:
+
+```java
+jArgs.createArgument("speed", (Integer) null);
+```
+If you set the default value to `null`, you'll have to cast it to either `Boolean`, `String` or `Integer` in order to set the type of the argument.
 
 
 ## Adding the *tokens*
@@ -45,7 +55,7 @@ e.g.: `./foo --path /home/foo`.
 * `--prev-dir`: This other argument has an specified default value, so when it appears on the command line, 
 the argument "path" takes the written value. It is used as: `./foo --prev-dir`.
 
-As said, we could also have *boolean* arguments such as:
+As said, we could also have `Boolean` arguments such as:
 
 ```java
 jArgs.createArgument("debug_mode", false)
@@ -55,11 +65,9 @@ jArgs.createArgument("debug_mode", false)
 ```
 
 In this case, if none of the previous tokens is written as an argument, the value of argument "debug_mode" is *false*.
-If the tokens "-d" or "--debug" are written, "debug_mode" is *true*.
+If the tokens `-d` or `--debug` are written, "debug_mode" is *true*.
 
-### Mandatory arguments
-
-If you want to force the user to set an argument, just set the default value to null:
+To create an `Integer` argument just set the default value as an `int` (or a casted `null` for a mandatory argument):
 
 ```java
 jArgs.createArgument("speed", (Integer) null)
@@ -68,7 +76,6 @@ jArgs.createArgument("speed", (Integer) null)
         .addToken("--medium", 3)
         .addToken("--fast", 5);
 ```
-If you set the default value to null, you'll have to cast it to either `Boolean`, `String` or `Integer` in order to set the type of the argument.
 
 ## Parsing the arguments
 After setting up the JavaArgs object, it needs to read the `String[] args` parameter of the `main` executable in order to parse 
