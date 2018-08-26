@@ -1,5 +1,7 @@
 package javaArgs;
 
+import javaArgs.exceptions.ExistingArgumentException;
+import javaArgs.exceptions.NonExistentArgumentException;
 import javaArgs.exceptions.NumberParsingException;
 import javaArgs.exceptions.ParsingException;
 
@@ -14,7 +16,7 @@ import static javaArgs.exceptions.ArgumentException.OnType.STRING;
  * Class used to facilitate the use of command line arguments in a Java program.
  * Each argument has an associated key (to retrieve the argument) and tokens (used from command line).
  * The steps to use this tool are the following:
- *
+ * <p>
  * 1) Get an instance through the constructor.
  * 2) Create the arguments and associate tokens to them.
  * 3) Parse the command line arguments.
@@ -25,190 +27,203 @@ import static javaArgs.exceptions.ArgumentException.OnType.STRING;
  */
 public class JavaArgs {
 
-    /**
-     * LinkedHasMap to store the arguments created.
-     */
-    private LinkedHashMap<String, Argument> args;
+	/**
+	 * LinkedHasMap to store the arguments created.
+	 */
+	private LinkedHashMap<String, Argument> args;
 
-    /**
-     * LinkedList of strings to store the lone arguments.
-     */
-    private LinkedList<String> loneArguments;
+	/**
+	 * LinkedList of strings to store the lone arguments.
+	 */
+	private LinkedList<String> loneArguments;
 
-    /**
-     * Integer to store the number of arguments parsed.
-     */
-    private int length;
+	/**
+	 * Integer to store the number of arguments parsed.
+	 */
+	private int length;
 
-    /**
-     * JavaArgs constructor.
-     */
-    public JavaArgs() {
-        this.args = new LinkedHashMap<>();
-        this.loneArguments = new LinkedList<>();
-        this.length = 0;
-    }
+	/**
+	 * JavaArgs constructor.
+	 */
+	public JavaArgs() {
+		this.args = new LinkedHashMap<>();
+		this.loneArguments = new LinkedList<>();
+		this.length = 0;
+	}
 
-    /**
-     * Method to create a boolean argument.
-     * Each argument requires a key and a default value (nullable).
-     *
-     * This method returns the argument created in order to chain token additions.
-     *
-     * TODO: Create arguments with the same key. Alert with own exception.
-     *
-     * @param key Key associated to the argument.
-     * @param defaultsTo Default value of the argument. If the value is a null Boolean, the argument is mandatory.
-     * @return The created argument.
-     */
-    public BooleanArgument createArgument(String key, Boolean defaultsTo) {
-        BooleanArgument arg = new BooleanArgument(defaultsTo);
-        args.put(key, arg);
-        return arg;
-    }
+	/**
+	 * Method to create a boolean argument.
+	 * Each argument requires a key and a default value (nullable).
+	 * <p>
+	 * This method returns the argument created in order to chain token additions.
+	 *
+	 * @param key        Key associated to the argument.
+	 * @param defaultsTo Default value of the argument. If the value is a null Boolean, the argument is mandatory.
+	 * @return The created argument.
+	 * @throws ExistingArgumentException The argument already exists.
+	 */
+	public BooleanArgument createArgument(String key, Boolean defaultsTo) throws ExistingArgumentException {
 
-    /**
-     * Method to create a string argument.
-     * Each argument requires a key and a default value (nullable).
-     *
-     * This method returns the argument created in order to chain token additions.
-     *
-     * TODO: Create arguments with the same key. Alert with own exception.
-     *
-     * @param key Key associated to the argument.
-     * @param defaultsTo Default value of the argument. If the value is a null String, the argument is mandatory.
-     * @return The created argument.
-     */
-    public StringArgument createArgument(String key, String defaultsTo) {
-        StringArgument arg = new StringArgument(defaultsTo);
-        args.put(key, arg);
-        return arg;
-    }
+		if (args.containsKey(key))
+			throw new ExistingArgumentException(key);
 
-    /**
-     * Method to create an integer argument.
-     * Each argument requires a key and a default value (nullable).
-     *
-     * This method returns the argument created in order to chain token additions.
-     *
-     * TODO: Create arguments with the same key. Alert with own exception.
-     *
-     * @param key Key associated to the argument.
-     * @param defaultsTo Default value of the argument. If the value is a null Integer, the argument is mandatory.
-     * @return The created argument.
-     */
-    public IntegerArgument createArgument(String key, Integer defaultsTo) {
-        IntegerArgument arg = new IntegerArgument(defaultsTo);
-        args.put(key, arg);
-        return arg;
-    }
+		BooleanArgument arg = new BooleanArgument(defaultsTo);
+		args.put(key, arg);
+		return arg;
+	}
 
-    /**
-     * Getter of all created arguments, ignoring type.
-     *
-     * @return All created arguments.
-     */
-    public Collection<Argument> getArguments() {
-        return args.values();
-    }
+	/**
+	 * Method to create a string argument.
+	 * Each argument requires a key and a default value (nullable).
+	 * <p>
+	 * This method returns the argument created in order to chain token additions.
+	 *
+	 * @param key        Key associated to the argument.
+	 * @param defaultsTo Default value of the argument. If the value is a null String, the argument is mandatory.
+	 * @return The created argument.
+	 * @throws ExistingArgumentException The argument already exists.
+	 */
+	public StringArgument createArgument(String key, String defaultsTo) throws ExistingArgumentException {
 
-    /**
-     * Method to retrieve an specific Argument from its key.
-     * TODO: Alert with own exception if the key doesn't exist.
-     *
-     * @param key Key of the argument to retrieve.
-     * @return The argument requested.
-     */
-    public Argument getArgument(String key) {
-        return args.get(key);
-    }
+		if (args.containsKey(key))
+			throw new ExistingArgumentException(key);
 
-    /**
-     * Method to retrieve all parsed input arguments that weren't associated to an argument of JavaArgs.
-     *
-     * @return Array of strings with all unassociated input arguments.
-     */
-    public String[] getLoneArguments() {
-        return this.loneArguments.toArray(new String[0]);
-    }
+		StringArgument arg = new StringArgument(defaultsTo);
+		args.put(key, arg);
+		return arg;
+	}
 
-    /**
-     * Method to parse the input arguments of the program.
-     *
-     * After this call all configured parameters have been modified according to the user input. The developer can now
-     * retrieve all values from the arguments using their keys.
-     *
-     * @param input Array of Strings received from command line to the variable 'args' from the main method.
-     * @throws ParsingException Exception thrown if a compound argument can't get its value.
-     * @throws NumberParsingException Exception thrown if the value of a compound integer argument is not formatted as an Integer.
-     */
-    @SuppressWarnings("unchecked")
-    public void parseInput(String[] input) throws ParsingException, NumberParsingException {
-        boolean found;
+	/**
+	 * Method to create an integer argument.
+	 * Each argument requires a key and a default value (nullable).
+	 * <p>
+	 * This method returns the argument created in order to chain token additions.
+	 *
+	 * @param key        Key associated to the argument.
+	 * @param defaultsTo Default value of the argument. If the value is a null Integer, the argument is mandatory.
+	 * @return The created argument.
+	 * @throws ExistingArgumentException The argument already exists.
+	 */
+	public IntegerArgument createArgument(String key, Integer defaultsTo) throws ExistingArgumentException {
 
-        if (input == null)
-            return;
+		if (args.containsKey(key))
+			throw new ExistingArgumentException(key);
 
-        this.length = 0;
-        for (int i = 0; i < input.length; i++) {
-            found = false;
-            for (Argument argument : this.args.values()) {
-                if (argument.isToken(input[i])) {
-                    ArgumentToken token = argument.getToken(input[i]);
+		IntegerArgument arg = new IntegerArgument(defaultsTo);
+		args.put(key, arg);
+		return arg;
+	}
 
-                    if (argument instanceof BooleanArgument) {
-                        argument.useToken(token);
+	/**
+	 * Getter of all created arguments, ignoring type.
+	 *
+	 * @return All created arguments.
+	 */
+	public Collection<Argument> getArguments() {
+		return args.values();
+	}
 
-                    } else if (argument instanceof StringArgument) {
-                        if (token.isCompound()) {
-                            if (++i < input.length) {
-                                argument.setValue(input[i]);
-                            } else
-                                throw new ParsingException(input[i - 1], STRING);
-                        } else {
-                            argument.useToken(token);
-                        }
+	/**
+	 * Method to retrieve an specific Argument from its key.
+	 *
+	 * @param key Key of the argument to retrieve.
+	 * @return The argument requested.
+	 * @throws NonExistentArgumentException The argument doesn't exist.
+	 */
+	public Argument getArgument(String key) throws NonExistentArgumentException {
 
-                    } else if (argument instanceof IntegerArgument) {
-                        if (token.isCompound()) {
-                            if (++i < input.length) {
-                                try {
-                                    argument.setValue(Integer.valueOf(input[i]));
-                                } catch (NumberFormatException e) {
-                                    throw new NumberParsingException(input[i - 1], input[i]);
-                                }
-                            } else
-                                throw new ParsingException(input[i - 1], INT);
-                        } else {
-                            argument.useToken(token);
-                        }
-                    }
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                this.loneArguments.add(input[i]);
-            }
-            this.length++;
-        }
-    }
+		if (!args.containsKey(key))
+			throw new NonExistentArgumentException(key);
 
-    /**
-     * Method to get the number of arguments read.
-     *
-     * @return The number of  arguments read.
-     */
-    public int length() {
-        return this.length;
-    }
+		return args.get(key);
+	}
 
-    /**
-     * Method to know if it wasn't possible to read any arguments.
-     *
-     * @return If it wasn't possible to read any arguments.
-     */
-    public boolean isEmpty() {
-        return this.length == 0;
-    }
+	/**
+	 * Method to retrieve all parsed input arguments that weren't associated to an argument of JavaArgs.
+	 *
+	 * @return Array of strings with all unassociated input arguments.
+	 */
+	public String[] getLoneArguments() {
+		return this.loneArguments.toArray(new String[0]);
+	}
+
+	/**
+	 * Method to parse the input arguments of the program.
+	 * <p>
+	 * After this call all configured parameters have been modified according to the user input. The developer can now
+	 * retrieve all values from the arguments using their keys.
+	 *
+	 * @param input Array of Strings received from command line to the variable 'args' from the main method.
+	 * @throws ParsingException       Exception thrown if a compound argument can't get its value.
+	 * @throws NumberParsingException Exception thrown if the value of a compound integer argument is not formatted as an Integer.
+	 */
+	@SuppressWarnings("unchecked")
+	public void parseInput(String[] input) throws ParsingException, NumberParsingException {
+		boolean found;
+
+		if (input == null)
+			return;
+
+		this.length = 0;
+		for (int i = 0; i < input.length; i++) {
+			found = false;
+			for (Argument argument : this.args.values()) {
+				if (argument.isToken(input[i])) {
+					ArgumentToken token = argument.getToken(input[i]);
+
+					if (argument instanceof BooleanArgument) {
+						argument.useToken(token);
+
+					} else if (argument instanceof StringArgument) {
+						if (token.isCompound()) {
+							if (++i < input.length) {
+								argument.setValue(input[i]);
+							} else
+								throw new ParsingException(input[i - 1], STRING);
+						} else {
+							argument.useToken(token);
+						}
+
+					} else if (argument instanceof IntegerArgument) {
+						if (token.isCompound()) {
+							if (++i < input.length) {
+								try {
+									argument.setValue(Integer.valueOf(input[i]));
+								} catch (NumberFormatException e) {
+									throw new NumberParsingException(input[i - 1], input[i]);
+								}
+							} else
+								throw new ParsingException(input[i - 1], INT);
+						} else {
+							argument.useToken(token);
+						}
+					}
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				this.loneArguments.add(input[i]);
+			}
+			this.length++;
+		}
+	}
+
+	/**
+	 * Method to get the number of arguments read.
+	 *
+	 * @return The number of  arguments read.
+	 */
+	public int length() {
+		return this.length;
+	}
+
+	/**
+	 * Method to know if it wasn't possible to read any arguments.
+	 *
+	 * @return If it wasn't possible to read any arguments.
+	 */
+	public boolean isEmpty() {
+		return this.length == 0;
+	}
 }
