@@ -17,9 +17,9 @@ import static javaArgs.exceptions.ArgumentException.OnType.STRING;
  * Each argument has an associated key (to retrieve the argument) and tokens (used from command line).
  * The steps to use this tool are the following:
  * <p>
- * 1) Get an instance through the constructor.
- * 2) Create the arguments and associate tokens to them.
- * 3) Parse the command line arguments.
+ * 1) Get an instance through the constructor.<p>
+ * 2) Create the arguments and associate tokens to them.<p>
+ * 3) Parse the command line arguments.<p>
  * 4) Retrieve the desired values.
  *
  * @author Ajordat
