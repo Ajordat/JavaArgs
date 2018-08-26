@@ -1,5 +1,13 @@
 package javaArgs;
 
+/**
+ * Class to define the desired behaviour of String arguments.
+ *
+ * It should be very similar to classes {@link BooleanArgument} and {@link IntegerArgument}.
+ *
+ * @author Ajordat
+ * @version 1.0
+ */
 public class StringArgument extends Argument<String> {
 
     StringArgument(String defaultsTo) {
@@ -7,9 +15,9 @@ public class StringArgument extends Argument<String> {
     }
 
     @Override
-    public void useToken(String token) {
+    public void useToken(String tokenName) {
         for (ArgumentToken argToken : args) {
-            if (argToken.getToken().equals(token)) {
+            if (argToken.getTokenName().equals(tokenName)) {
                 this.value = (String) argToken.getValue();
             }
         }
